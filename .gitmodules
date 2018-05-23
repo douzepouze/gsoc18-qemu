@@ -1,4 +1,4 @@
 [submodule "mbgithub"]
 	path = qemu
-	url = https://github.com/stefanha/qemu.git
+	url = https://github.com/douzepouze/qemu.git
 	branch = microbit
