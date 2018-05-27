@@ -1,9 +1,15 @@
-=== Notes 05/25 ===
-- Set up docker container based on phuison/baseimage-docker (ubuntu 16.04 LTS based)
-- Setup mbed/yotta toolchain, build microbit-dal/microbit-samples: Success!
-- Try to run qemu with elf/hex: does not work
-- Investigate microbit.hex from online compilter vs. build from offline toolchain:
-Sections in Online file (known to work):
+# Notes 05/25
+
+- Set up docker container based on `phuison/baseimage-docker` (ubuntu 16.04 LTS based)
+  - Setup mbed/yotta toolchain, build microbit-dal/microbit-samples: Success!
+  - Try to run qemu with elf/hex: does not work.
+  - Crashes on first `ni` when gdb attached, also no code at location of reset vector
+
+---
+
+**Sections** of `.hex` file generated using **online** toolchain:
+
+```
 /home/pouze/Downloads/microbit.hex:     file format ihex
 /home/pouze/Downloads/microbit.hex
 architecture: UNKNOWN!, flags 0x00000000:
@@ -24,16 +30,24 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD
 SYMBOL TABLE:
 no symbols
+```
+
+Begin loading of `.text` at offset `0x0000 0000`, vector PC to `0x000153ed` on reset.
 
 
-Online:
+**Entries in `.hex` file**:
+```
 :020000040000FA  --> Following entry addreses are the most significant 16 bit of the address
 :1000000000400020ED530100295401002B54010051 --> Load first entry (32 bytes) starting at offset 0x000
 :1000100000000000000000000000000000000000E0
+```
 
-Offline:
+---
 
-pouze@gouranga ~/projects/gsoc/kernels (git)-[master] % arm-none-eabi-objdump -x microbit_samples_1.elf            
+**Sections** in `.elf` file created using **offline** toolchain:
+
+```
+pouze@gouranga % arm-none-eabi-objdump -x microbit_samples_1.elf            
 
 microbit_samples_1.elf:     file format elf32-littlearm
 microbit_samples_1.elf
@@ -70,9 +84,12 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   7 .comment      0000007e  00000000  00000000  00023240  2**0
                   CONTENTS, READONLY
+```
 
+Here, the `.text` section is loaded to offset `0x00018000`. 
+Lets try to fix this. Copy all loadable sections to `.hex` file:
 
-- Create own .hex from .elf via objcopy
+```
 arm-none-eabi-objcopy -O ihex input.elf output.hex:
 
 pouze@gouranga ~/projects/gsoc/kernels (git)-[master] % arm-none-eabi-objdump -x output.hex
@@ -91,11 +108,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD
 SYMBOL TABLE:
 no symbols
-
-:020000021000EC --> Extended Segment Address Record for the following entries, but address is 0x0000 so its basically a no-op
-:108000000040002065F50100A1F50100A3F5010085 --> Load first entry (32 bytes) starting at offset 0x8000
-
-Try to change load address of .text?
+```
+Lets try with corrected addresses:
+```
 arm-none-eabi-objcopy -O ihex --change-section-address .text=0x00 input.elf output.hex:
 
 pouze@gouranga ~/projects/gsoc/kernels (git)-[master] % arm-none-eabi-objdump -x output.hex
@@ -118,14 +133,18 @@ SYMBOL TABLE:
 no symbols
 
 
-head -n3 output.hex
+pouze@gouranga ~/projects/gsoc/kernels (git)-[master] % head -n3 output.hex
 :100000000040002065F50100A1F50100A3F5010005
 :1000100000000000000000000000000000000000E0
 :10002000000000000000000000000000A5F5010035
 
-Better use objdump -h to show section headers
+```
+
+> Better use objdump -h to show section headers
 
 Disassembly of micro_samples_1.elf (Offline file):
+
+```
 microbit_samples_1.elf:     file format elf32-littlearm
 
 
@@ -142,8 +161,11 @@ Disassembly of section .text:
    1f566:   6802        ldr r2, [r0, #0]
    1f568:   2103        movs    r1, #3
    1f56a:   430a        orrs    r2, r1
+```
 
 Disassembly of microbit.hex (online file):
+
+```
 arm-none-eabi-objdump -m arm -D ~/Downloads/microbit.hex > ~/tmp/dump_online_hex.txt
 
 /home/pouze/Downloads/microbit.hex:     file format ihex
@@ -155,18 +177,20 @@ Disassembly of section .sec1:
        0:   20004000   --> init Sp 
        4:   000153ed   --> Reset vector 0x153ec
        8:   00015429    andeq   r5, r1, r9, lsr #8
+```
 
-According to NRF51 reference manual:
-- Code Flash Start is 0x0000 0000
-- Data Ram Start is   0x2000 0000
+According to _NRF51 reference manual_:
+- Code Flash Start is `0x0000 0000`
+- Data Ram Start is   `0x2000 0000`
 
-Size of Sections (according to Nordic nRF51822-QFAA-R rev 3 datasheet):
-- Flash Size: 256KB, highest address in bytes therefore: 0x40000
-- SRAM Size: 16KB, highest address in bytes therefore: 0x20004000
-Furthermore .data, .bss, .stack, .heap must reside in Block1,RAM3, which seem to be the upper half of the SRAM: 0x20002000 - 0x20004000 
+Size of Sections (according to _Nordic nRF51822-QFAA-R rev 3 datasheet_):
+- Flash Size: 256KB, highest address in bytes therefore:` 0x40000`
+- SRAM Size: 16KB, highest address in bytes therefore: `0x20004000`
+Furthermore `.data`, `.bss`, `.stack`, `.heap` must reside in `Block1,RAM3`, which seem to be the upper half of the SRAM: `0x20002000 - 0x20004000`
 
+```
 arm-none-eabi-objcopy --change-section-address .text=0x00 -R .ARM.exidx microbit_samples_1.elf microbit_samples_1_moved.elf
-
+```
 this at least does not lead to immediate panic but all absolute addresses (vector table) still stay the same. 
 
 The only solution is to fix the microbit-samples linker file.
@@ -179,7 +203,7 @@ yt build
 
 yields a elf file with sections allocated at the right adresses. This file can be loaded and used
 for debugging right away:
-
+```
 pouze@gouranga ~ % docker cp elated_lamport:/bbcmicrobit/build/bbc-microbit-classic-gcc-nosd/source/microbit-micropython ~/tmp/micropython.elf
 pouze@gouranga ~ % arm-none-eabi-objdump -h ~/tmp/micropython.elf
 
@@ -221,9 +245,10 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  16 .stabstr      00000076  00000000  00000000  00370678  2**0
                   CONTENTS, READONLY, DEBUGGING
-
+```
 microbit-samples can also be build with the yt target bbc-microbit-classic-gcc-nosd target and this then located at the right adresses.
-=== Notes 05/24 ===
+
+# Notes 05/24 
 - mbed offline toolchain installiert (auf arch)
 - installation of yotta does not work with pip == 10.x (breaks project-generator dependency)
 - can not build microbit-samples project:
@@ -231,7 +256,7 @@ microbit-samples can also be build with the yt target bbc-microbit-classic-gcc-n
      Problem: SVC calls in -mcpu=cortex-m0 / -march=armv6-m (should be ok in armv6s-m though and cortex-m0 include priviledge extension)
 
 
-=== Notes 05/20 ===
+# Notes 05/20
 
 QMP = QEMU maschine protocol
 
@@ -248,7 +273,7 @@ QMP command types:
  Access qmp: run qemu in control mode:
   -qmp tcp:localhost:4444,server
   -qmp unix:/tmp/qmp-sock,server
-
+```
 qom-list /machine
             /unattached/
                         device[0]
@@ -263,9 +288,9 @@ QMP -> Receive -> Eval GPIO Configuration -> Struct GPIO
                                                 |
                                                 |
                                                MMIO
+```
 
-
-=== Notes 05/18 ===
+# Notes 05/18
 
 OOT Build softmmu only: ./configure --target-list=arm-softmmu --enable-debug
 -machine microbit
@@ -282,7 +307,7 @@ OOT Build softmmu only: ./configure --target-list=arm-softmmu --enable-debug
 -monitor
 -serial mon:stdio
 
-==== qemu command line utility ====
+## qemu command line utility
     * device_add
     * device_del
     * stop
@@ -294,15 +319,15 @@ OOT Build softmmu only: ./configure --target-list=arm-softmmu --enable-debug
     * logfile
     * Ctrl+a x: exit emulator (QEMU character ackend multiplexer)
 
-=== Notes 05/16 ===
+# Notes 05/16
 
-==== QTest ====
+## QTest
 - libqtest api --> QMP
 - qemu/tests, qemu/tests/libqos, qemu/tests/Makefile
 - Run single test: make tests/my-test
 - QTEST_LOG=1 => Print to stderr
 - QTEST_STOP=1 => Stop to connect to debugger
 
-Attach 1) gdb --pid=$(pidof my-test)
-Continue 2) kill -SIGCONT $(pidof qemu-system-arm)
+1. Attach: `gdb --pid=$(pidof my-test)`
+2. Continue: `kill -SIGCONT $(pidof qemu-system-arm)`
 
