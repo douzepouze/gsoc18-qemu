@@ -38,12 +38,21 @@ Still have not really understood QOM.
     - Used callback on _stm32f205_ class, which is a `DeviceClass`:
       - _realize_: Called when `realized` property changed to true
   - `DeviceClass` objects are constructed in two stages:
-    - Object instantiation via `object\_initialize` (can fail)
+    - Object instantiation via `object_initialize` (can fail)
       - Trivial field initialization
     - Device realization (may not fail and must be re-entrant)
-      - 
-
-
+      - All static properties must be set before this step
+  - Difference between `TypeInfo::instance_init` and `DeviceClass::realize`:
+    - Both gets passed the `State` object not the `DeviceClass` object
+    - **1)** `TypeInfo::instance_init`:
+      - Called to initialize the object
+      - Class already initialized
+      - Initialize 'child' objects/device and attach to sysbus as well
+    - **2)** `DeviceClass:realize`:
+      - Can interact with 'child' objects/devices 
+      - Interconnect devices/irqs
+      - Set _realized_ property in children to _true_
+      
 # Notes 05/27
 
 - Fix SuHang tests with symlink outside OOT build dist to tests
