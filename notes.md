@@ -35,6 +35,13 @@ Still have not really understood QOM.
     - Parent class is copied into sub-class after initialization
     - After parent initialization, `TypeInfo::class_init` is called to init the current class
     - _method_: Operates on object instance, passed as first argument
+    - Used callback on _stm32f205_ class, which is a `DeviceClass`:
+      - _realize_: Called when `realized` property changed to true
+  - `DeviceClass` objects are constructed in two stages:
+    - Object instantiation via `object\_initialize` (can fail)
+      - Trivial field initialization
+    - Device realization (may not fail and must be re-entrant)
+      - 
 
 
 # Notes 05/27
