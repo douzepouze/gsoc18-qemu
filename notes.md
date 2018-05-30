@@ -52,7 +52,18 @@ Still have not really understood QOM.
       - Can interact with 'child' objects/devices 
       - Interconnect devices/irqs
       - Set _realized_ property in children to _true_
-      
+
+---
+
+## Refine button-set-state design
+
+- Remove microbit.json again
+  - Move to more general api --> stimulate.json
+- Set mapping either as `MachineClass` or `MachineState` property
+- In button-set-state, get object from tree with `object_resolve_path`
+- Get gpio for button from mapping
+- Stimulate gpio
+
 # Notes 05/27
 
 - Fix SuHang tests with symlink outside OOT build dist to tests
