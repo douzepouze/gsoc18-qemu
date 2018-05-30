@@ -21,7 +21,7 @@ Still have not really understood QOM.
   - Multiple inheritance of stateless interfaces
 
 - Minimal example with `type_init`
-  -`type_init` on module level --> call registering functions
+  - `type_init` on module level --> call registering functions
   - Register new type (with name and parent name) via `TypeInfo` struct using `type_register_state`, instance size of DeviceState for device
   - Alternative register serveral types via `DEFINE_TYPES`
   - Every *type* has an *ObjectClass* associated with it
