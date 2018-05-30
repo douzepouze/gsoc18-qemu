@@ -60,7 +60,12 @@ Still have not really understood QOM.
 - Remove microbit.json again
   - Move to more general api --> stimulate.json
 - Set mapping either as `MachineClass` or `MachineState` property
+  - Add property dynamically to `MachineState` for now, `MachineClass` required manual implementation of subclassed machine class
 - In button-set-state, get object from tree with `object_resolve_path`
+  - Attach new object to machine: `/machine/stimulate/`
+  - Buttons be like: `/machine/stimulate/button-a` or `/machine/stimulate/button/a` or `/machine/stimulate/button[0]` (with name "a")
+  - Other peripherals (like adcs) be like: `/machine/stimulate/analogin` etc
+  - Stimulate acts as an *adapter* across the *system boundary* and translates _high level_ *machine objects* likes buttons, analog ins, analog outs, leds to `DeviceClass` level manipulations.
 - Get gpio for button from mapping
 - Stimulate gpio
 
