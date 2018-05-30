@@ -1,3 +1,49 @@
+# Notes 05/29
+
+Reading more code: `hw/arm/stm32f205_soc` and `hw/arm/netduino`
+---
+
+Used in machine netduino2.
+
+- In Class:
+  - Setup MemoryRegions
+    - `init_ram`, `init_flash` sets SIZE
+    - Set readonly flash
+    - Set flash alias region
+    - `add_subregion` sets mapped address
+
+Still have not really understood QOM. 
+
+## Reading object.h.
+- Registering user creatable types
+  - Dynamically regisering
+  - Single-inheritance
+  - Multiple inheritance of stateless interfaces
+
+- Minimal example with `type_init`
+  -`type_init` on module level --> call registering functions
+  - Register new type (with name and parent name) via `TypeInfo` struct using `type_register_state`, instance size of DeviceState for device
+  - Alternative register serveral types via `DEFINE_TYPES`
+  - Every *type* has an *ObjectClass* associated with it
+  - *ObjectClass* is dynamically instantiated *singleton*
+  - *ObjectClass* contains table of function pointers with virtual methods
+  - `object_new` is used to instantiate a _object_ of _class_ *ObjectClass*
+  - _object_ can be casted up/down the hierachy with `object_dynamic_cast`, usually via `OBJECT_CHECK` and `OBJECT_CLASS_CHECK` macros
+  - *ObjectClass* initialization
+    - Lazily instantiated
+    - First initialize any parent class
+    - Parent class is copied into sub-class after initialization
+    - After parent initialization, `TypeInfo::class_init` is called to init the current class
+    - _method_: Operates on object instance, passed as first argument
+
+
+# Notes 05/27
+
+- Fix SuHang tests with symlink outside OOT build dist to tests
+- Run hexload and boot-serial-test tests with
+  - export QTEST\_LOG=1 for logging to stderr
+  - make check-qtest-arm
+
 # Notes 05/25
 
 - Set up docker container based on `phuison/baseimage-docker` (ubuntu 16.04 LTS based)
@@ -324,7 +370,9 @@ OOT Build softmmu only: ./configure --target-list=arm-softmmu --enable-debug
 ## QTest
 - libqtest api --> QMP
 - qemu/tests, qemu/tests/libqos, qemu/tests/Makefile
+- Run all test: make check
 - Run single test: make tests/my-test
+- make check SPEED=slow V=1" for a verbose, more thorough test run
 - QTEST_LOG=1 => Print to stderr
 - QTEST_STOP=1 => Stop to connect to debugger
 
