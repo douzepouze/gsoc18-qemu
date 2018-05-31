@@ -1,3 +1,17 @@
+# Notes 05/31
+
+Useful flags for debugging:
+```
+-singlestep -d in_asm,cpu -D /tmp/qemu.log
+```
+
+- `-d in_asm` prints address, bytecode, mnemonic and operands of the instruction being executed
+- `-d cpu` prints contents of all registers after execution
+- `-singlestep` evaluate debug options after each instruction
+  - Affects `DisasContextBase` members `singlestep_enabled`, `singlestep`, `max_insns` in `translator.c`
+
+Small howto how to add qmp commands: `qemu/qemu/docs/devel/writing-qmp-commands.txt`
+
 # Notes 05/29
 
 Reading more code: `hw/arm/stm32f205_soc` and `hw/arm/netduino`
