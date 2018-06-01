@@ -12,6 +12,30 @@ Useful flags for debugging:
 
 Small howto how to add qmp commands: `qemu/qemu/docs/devel/writing-qmp-commands.txt`
 
+----
+
+## `memory_` API
+
+- Found in `qemu/inlcude/exec/memory.h`
+- Use `memory_region_init` to create a _ memory container_, just map the maximal memory size (_UINT64MAX_)
+  - Use `memory_region_add_subregion_overlay` to create overlay of mapped memory
+    - Overlay can be given `priority`, higher priority beats lower priority
+  - Use `memory_region_init_ram` to create a SRAM MemoryRegion 
+  - Use `memory_region_add_subregion` to add regular subregions into a container (reference to eg. SRAM region) 
+  - `memory_region_size`
+
+### Best practices attach MMIO device to SoC (iotkit - tz-ppc)
+Prerequisites:
+- Peripheral device class must be inherited from TYPE_SYS_BUS_DEVICE 
+
+In Peripheral:
+- Use `memory_region_init_io` to create memory region **MR** and attached MemoryRegionOps
+- Use `sysbus_init_mmio` to register **MR** with sysbus device 
+
+In the SoC:
+- Use `sysbus_mmio_get_region` to get **MR** from peripheral
+- Use `memory_region_add_subregion` to map MMIO to SOC container 
+
 # Notes 05/29
 
 Reading more code: `hw/arm/stm32f205_soc` and `hw/arm/netduino`
