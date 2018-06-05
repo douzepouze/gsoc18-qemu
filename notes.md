@@ -1,3 +1,17 @@
+# Notes 06/05
+
+Pomodoros:
+  - Apply peripheral stubs from julia
+  - Change code to PM proposed layout
+  - Add attribute for actual SOC type
+  - Map all peripheral MMIO areas systematically
+
+## GDB Muscle Memroy
+  - `symbol-file` to load symbol
+  - `break *0xADDRESS` to break at address
+  - `monitor system_reset` to issue a `system_reset` to qemu
+
+
 # Notes 06/03
 
 - NRF51822 supports S100 SoftDevice
