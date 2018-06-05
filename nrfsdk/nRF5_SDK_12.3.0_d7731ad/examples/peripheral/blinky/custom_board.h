@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 - 2017, Nordic Semiconductor ASA
+ * Copyright (c) 2012 - 2017, Nordic Semiconductor ASA
  *
  * All rights reserved.
  *
@@ -37,56 +37,36 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+#ifndef PCA10001_H
+#define PCA10001_H
 
-/** @file
- *
- * @defgroup blinky_example_main main.c
- * @{
- * @ingroup blinky_example
- * @brief Blinky Example Application main file.
- *
- * This file contains the source code for a sample application to blink LEDs.
- *
- */
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <stdbool.h>
-#include <stdint.h>
-#include "nrf_delay.h"
-#include "boards.h"
+#include "nrf_gpio.h"
 
-#define MAT_ROWS 1
-#define MAT_COLS 9
+#define BUTTON_START   17
+#define BUTTON_0       17
+#define BUTTON_1       26
+#define BUTTON_STOP    26
+#define BUTTON_PULL    NRF_GPIO_PIN_NOPULL
 
-static const uint8_t m_board_mat_rows[MAT_ROWS] = {13,};
-static const uint8_t m_board_mat_cols[MAT_COLS] = {4, 5, 6, 7, 8, 9, 10, 11, 12};
+#define BUTTONS_ACTIVE_STATE 0
 
-/**
- * @brief Function for application main entry.
- */
-int main(void)
-{
+#define BSP_BUTTON_0   BUTTON_0
+#define BSP_BUTTON_1   BUTTON_1
 
-	for(int i = 0; i < MAT_COLS; i++) {
-		nrf_gpio_cfg_output(m_board_mat_cols[i]);
-		nrf_gpio_pin_write(m_board_mat_cols[i], 1);
-	}
+#define BUTTONS_NUMBER 2
+#define LEDS_NUMBER    0
 
-	for(int i = 0; i < MAT_ROWS; i++) {
-		nrf_gpio_cfg_output(m_board_mat_rows[i]);
-		nrf_gpio_pin_write(m_board_mat_rows[i], 1);
-	}
+#define BUTTONS_LIST { BUTTON_0, BUTTON_1 }
 
+#define RX_PIN_NUMBER  25
+#define TX_PIN_NUMBER  24
 
-    /* Toggle LEDs. */
-    while (true)
-    {
-        for (int i = 0; i < LEDS_NUMBER; i++) {
-            nrf_delay_ms(500);
-            nrf_gpio_pin_toggle(m_board_mat_cols[0]);
-        }
-    }
+#ifdef __cplusplus
 }
+#endif
 
-/**
- *@}
- **/
+#endif
