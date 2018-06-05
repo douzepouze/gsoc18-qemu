@@ -1,3 +1,11 @@
+# Notes 06/03
+
+- NRF51822 supports S100 SoftDevice
+- Differences between nRF51822 and nRF51422
+  - For nRF51422, you can flash all softdevices for BLE and/or ANT protocols (S110, S120, S130, S210, S310)
+  - For nRF51822, you can flash only BLE softdevices (S110, S120, S130)
+
+
 # Notes 05/31
 
 Useful flags for debugging:
