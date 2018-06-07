@@ -1,3 +1,28 @@
+# Notes 06/07
+
+## Chip Variant Attributes
+
+There are **6** chip variants for the NRF51**8**22 noted in the reference
+manual. Furthermore, there are variants of the related NRF51**4**22.
+
+The chip code _NRF51XXXPPVVHPYYWWLL_ is made of the following items
+- **PP**: Package Code
+  - **QF**: QFN Package, 48 Pins
+  - **CD**: WLCSP Package, 56 Pins
+  - **CE**: WLCSP Package, 62 Pins
+  - **CF**: WLCSP Package, 62 Pins
+  
+**VV**: Variant Code
+
+| Variant  | Flash | RAM |
+| --- | --- | --- |
+| AA | 256 kB | 16 kB |
+| AB | 128 kB | 16 kB |
+| AC | 256 kB | 32 kB |
+
+
+
+
 # Notes 06/05
 
 Pomodoros:
@@ -10,6 +35,7 @@ Pomodoros:
   - `symbol-file` to load symbol
   - `break *0xADDRESS` to break at address
   - `monitor system_reset` to issue a `system_reset` to qemu
+  - `p/t $cpsr` print status register
 
 
 # Notes 06/03
