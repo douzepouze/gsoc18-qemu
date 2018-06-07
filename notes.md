@@ -6,13 +6,13 @@ There are **6** chip variants for the NRF51**8**22 noted in the reference
 manual. Furthermore, there are variants of the related NRF51**4**22.
 
 The chip code _NRF51XXXPPVVHPYYWWLL_ is made of the following items
-- **PP**: Package Code
-  - **QF**: QFN Package, 48 Pins
-  - **CD**: WLCSP Package, 56 Pins
-  - **CE**: WLCSP Package, 62 Pins
-  - **CF**: WLCSP Package, 62 Pins
+### **PP**: Package Code
+- **QF**: QFN Package, 48 Pins
+- **CD**: WLCSP Package, 56 Pins
+- **CE**: WLCSP Package, 62 Pins
+- **CF**: WLCSP Package, 62 Pins
   
-**VV**: Variant Code
+### **VV**: Variant Code
 
 | Variant  | Flash | RAM |
 | --- | --- | --- |
