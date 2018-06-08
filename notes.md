@@ -14,11 +14,20 @@ The chip code _NRF51XXXPPVVHPYYWWLL_ is made of the following items
   
 ### **VV**: Variant Code
 
-| Variant  | Flash | RAM |
-| --- | --- | --- |
-| AA | 256 kB | 16 kB |
-| AB | 128 kB | 16 kB |
-| AC | 256 kB | 32 kB |
+| Variant  | Flash | RAM | RAM Blocks | RAM Sections |
+| --- | --- | --- | --- | --- |
+| AA | 256 kB | 16 kB | 2 | 4 |
+| AB | 128 kB | 16 kB | 2 | 4 |
+| AC | 256 kB | 32 kB | 4 | 8 |
+
+The RAM region is divided into _blocks_. Each block of 8 kB can be indiviual 
+powered down by the power managment to save energy.
+
+Each _block_ is made up of two _sections_. Each section of 4 kB has an dedicated 
+AHB slave.
+
+Some care should be taken to separate sections used by peripherals and 
+allocation of CODE, heap and stack to allow for parallel memory access.
 
 
 
