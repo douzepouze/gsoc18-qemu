@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include "nrf_delay.h"
 #include "boards.h"
 #include "nrf_drv_uart.h"
 #include "nrf_assert.h"
@@ -9,7 +8,7 @@ static uint8_t const str[] = "Test";
 
 int main(void)
 {
-	// Init UART
+    // Init UART
     nrf_drv_uart_config_t config = NRF_DRV_UART_DEFAULT_CONFIG;
 
     config.pselrxd = RX_PIN_NUMBER;
@@ -27,6 +26,6 @@ int main(void)
     /* Toggle LEDs. */
     while (true)
     {
-    	nrf_delay_ms(500);
+        nrf_delay_ms(500);
     }
 }
