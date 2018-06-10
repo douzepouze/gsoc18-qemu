@@ -1,3 +1,14 @@
+# Notes 06/10
+
+## Copy eclipse cdt project
+
+- Project copy does not work (nullpointer exception)
+- Copy project manually in workspace
+  - Copy & paste `gpio` project to `newname`
+  - `find . -type f -exec sed -i 's/blinky/newname/g' {} +`
+  
+## Attach serial monitor to 
+
 # Notes 06/07
 
 ## Chip Variant Attributes

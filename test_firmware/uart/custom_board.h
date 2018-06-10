@@ -3,8 +3,8 @@
  *
  **/
 
-#ifndef PCA10001_H
-#define PCA10001_H
+#ifndef MICROBIT_H
+#define MICROBIT_H
 
 #ifdef __cplusplus
 extern "C" {
