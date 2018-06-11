@@ -19,7 +19,7 @@ int main(void)
 
     nrf_drv_uart_t uart_driver = NRF_DRV_UART_INSTANCE(0);
     uint32_t err_code = nrf_drv_uart_init(&uart_driver, &config, NULL);
-    ASSERT(err_code != NRF_SUCCESS);
+    ASSERT(err_code == NRF_SUCCESS);
 
     nrf_drv_uart_rx_enable(&uart_driver);
     nrf_drv_uart_tx(&uart_driver, str, sizeof(str));

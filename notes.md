@@ -45,6 +45,32 @@ mqemu -machine microbit -nodefaults -nographic -d unimp \
 with parameters `server,nowait` and set id to `foo`
 - Allocate a new device of type `myi2c` and set parameter `chardev` to `foo`
 
+## Use of timers
+
+Timers are found in `include/qemu/timers.h`.
+
+`timer_new_ns(QEMU_CLOCK_VIRTUAL, gptm_tick, &s->opaque[0]);`
+
+Important: Thread context of the timer interrupt.
+"in icount mode, %QEMU_CLOCK_VIRTUAL timers are run in the vCPU thread. "
+
+=> Important... but i don't know what icount mode is or how to get in there. I just suppose this is true and cross fingers for now.
+
+Timer Control:
+- timer_mod
+- timer_del
+
+Timer seem to be always one-shot (from reading aspeed/stelaris code).
+
+Examples of usage of timers:
+- `hw/timer/aspeed_timer.c`
+- `hw/arm/stellaris.c`
+
+
+## Random
+
+- Use of custom trace event in `trace_aspeed_timer_ctrl_enable(t->id, enable);`
+
 # Notes 06/07
 
 ## Chip Variant Attributes
@@ -513,6 +539,7 @@ QMP -> Receive -> Eval GPIO Configuration -> Struct GPIO
 # Notes 05/18
 
 OOT Build softmmu only: ./configure --target-list=arm-softmmu --enable-debug
+```
 -machine microbit
 -machine help: Lists machines
 -kernel: gust image
@@ -526,6 +553,7 @@ OOT Build softmmu only: ./configure --target-list=arm-softmmu --enable-debug
 -display curses: ncurses interface
 -monitor
 -serial mon:stdio
+```
 
 ## qemu command line utility
     * device_add
