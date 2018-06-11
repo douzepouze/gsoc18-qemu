@@ -7,7 +7,43 @@
   - Copy & paste `gpio` project to `newname`
   - `find . -type f -exec sed -i 's/blinky/newname/g' {} +`
   
-## Attach serial monitor to 
+## Attach serial monitor to stdio
+Use the `-serial backend` option to allocate a new 
+serial handle (see `serial_parse`, `serial_hd`) and connects 
+it to _backend_. The first serial handle allocated will be handle 0.
+
+The NRF51 SOC connects the _UART0_ peripheral instance to the
+serial handle 0.  
+
+There are many backends (see `qemu_chr_parse_compat`), including:
+- _null_
+- _chardev_
+- _stdio_
+- _pty_
+
+There are also "modifier" (?):
+- _mon:_
+  - Used together `stdio` will mux this serial handle with the
+  monitor
+  - Control characters will also be send to the guest, to terminate
+  qemu press `Ctrl+a, Ctrl+x`
+  
+### Examples
+
+Full example running NRF51 UART Loopback example:
+```
+mqemu -machine microbit -nodefaults -nographic -d unimp \
+-kernel /home/pouze/projects/gsoc/test_firmware/uart/_build/fw.out \
+-serial mon:stdio
+```
+
+## Set up character device
+
+`-chardev socket,path=/tmp/foo.sock,server,nowait,id=foo -device myi2c,chardev=foo`
+
+- Allocate a new character device, connect to _socket_ backend
+with parameters `server,nowait` and set id to `foo`
+- Allocate a new device of type `myi2c` and set parameter `chardev` to `foo`
 
 # Notes 06/07
 
