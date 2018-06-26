@@ -1,3 +1,42 @@
+# Notes 06/22
+
+- NVMC
+    - ERASEPCR0 can only be accessed by code running in code region 0. This ids enforced by the MPU 
+
+# Notes 06/21
+
+- Instead of mapping a MMIO device just to read
+the FICR data, it would also be possible map a fixed data memory region as ram using `memory_region_init_ram_ptr` (the function does not copy but maps the data passed by `ptr`). Then `memory_region_set_readonly` can be used to make the region readonly.
+
+- Use hmp command `info mtree` to generate a nice memory tree with all the mapped regions
+
+- NRF51 SDK NVMC driver: `vim yotta_modules/nrf51-sdk/source/nordic_sdk/components/drivers_nrf/hal/nrf_nvmc.c`
+
+- SSI Bus API QEMU Synchronous Serial Interface support
+
+- Implementation of a I2C device see `hw/nvram/eeprom_at24c.c` for example
+
+## NVMC
+
+- Write can be conducted word-by-word to CODE or UICR sections.
+- Can only be written if it was erased before
+- Erasing is conducted on a per-page basis
+  - Erasing can be conducted by `address_space_read/write` primitives
+- The driver code in `nrf_nvmc.c` checks/pends on the READY / BUSY bits. They need to be implemented.
+
+# Notes 06/20
+
+## Docker
+
+```
+docker container ls -- List containers
+docker container start microbit_dal -- Start container
+docker container attach microbit_dal -- Attach container
+docker container stop microbit_dal -- Stop container
+docker cp microbit_dal:/bbcmicrobit/build/bbc-microbit-classic-gcc-nosd/source/microbit-micropython . -- Copy from container to host
+```
+
+
 # Notes 06/10
 
 ## Copy eclipse cdt project
@@ -113,7 +152,7 @@ Pomodoros:
   - Add attribute for actual SOC type
   - Map all peripheral MMIO areas systematically
 
-## GDB Muscle Memroy
+## GDB Muscle Memory
   - `symbol-file` to load symbol
   - `break *0xADDRESS` to break at address
   - `monitor system_reset` to issue a `system_reset` to qemu
