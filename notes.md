@@ -1,3 +1,128 @@
+# Notes 07/04
+
+## Run microbit tests
+
+TBD
+
+## pyOCD + DAPLINK 
+
+### Change udev rules 
+
+`/etc/udev/rules.d/90-usb-microbit.rules is owned by mu-editor 1:0.9.13-1`
+
+change line 
+
+`SUBSYSTEM=="tty", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", MODE="0666"`
+
+to 
+
+`SUBSYSTEM=="usb", ATTRS{idVendor}=="0d28", ATTRS{idProduct}=="0204", MODE="0666"`
+
+for non-root access on CMSIS-DAP HID endpoint.
+
+```
+pouze@gouranga ~/projects/gsoc/dist (git)-[master] % pyocd-tool list
+0 => Microbit [nrf51] boardId => 9900000043114e4500549001000000490000000097969901
+```
+
+## Access micropython repl
+
+Micropython must be in REPL mode, which means there can not
+be any piggybacked python file attached to the hex file.
+
+I flashed the `microbit-micropython-e10a5ffdbaf1.hex` file to 
+get access the the REPL.
+
+The Freescale KL26Z exposes three interfaces to the microbit via USB:
+* Mass Storage Device to drop & flash firmware (in intel hex format)
+* CDC UART Pass through from the nRF51 to the host
+* CMSIS-DAP (HID) debug interface. Can be used with pyOCD gdbserver for SWD debugging.
+
+If the micropython firmware is flashed, the micropython REPL will be exposed on UART. Baudrate is 115200 Baud.
+
+Screen can be used as a serial terminal:
+
+`screen /dev/ttyACM1 115200`
+
+Exit screen with `^A+k`.
+
+## Access memory from micropython
+
+Micropython provides an interface to the SOC memory via the
+`machine` module.
+
+```python
+import machine
+
+# Print init address of SP
+print(hex(machine.mem32[0x00000000]))
+```
+
+## Test NVMC behavior out of micropython repl
+
+Access to the SOCs raw memory is provided by micropython
+through the `machine` modules `mem8`, `mem16` and `mem32` properties. The implementation
+can be found in the micropython sources in `extmod/machine_mem.c`.
+
+```python
+import machine
+
+page_size = 1024
+target_page = 254
+
+# Set NVMC CONFIG.EEN
+machine.mem32[0x4001E504] = 0x02
+
+# Delete target page
+machine.mem32[0x4001E508] = target_page * page_size
+
+# Reset NVMC CONFIG
+machine.mem32[0x4001E504] = 0x00
+
+# Verify page erased
+for word in range(0, page_size, 4):
+    # mem32 returns signed integers, so we test for -1 instead of 0xFFFFFFFF
+    if machine.mem32[target_page * page_size + word] != -1:
+        print("Bad word")
+        print(target_page * page_size + word)
+        
+# Set NVMC CONFIG.WEN
+machine.mem32[0x4001E504] = 0x01
+machine.mem32[target_page * page_size] = 123456789
+# Reset NVMC CONFIG.WEN
+machine.mem32[0x4001E504] = 0x00
+if machine.mem32[target_page * page_size] != 123456789:
+    print('Write did not succeed')
+
+# Try to write another word without setting write enabled
+machine.mem32[target_page * page_size + 4] = 123456789
+if machine.mem32[target_page * page_size + 4] != 123456789:
+    print('Write did not succeed')
+```
+
+From the tests, it was determined that writes without `CONFIG.WEN` will simply not change the value.
+Writes to unaligned addresses (using `mem8`) will cause a hard fault.
+
+# Notes 06/26
+
+## Git Muscle Memory
+
+* Show diff of commit compared with parent
+  * `git diff $COMMITID^!`
+
+# Notes 06/23
+
+## Git Muscle Memory
+
+### Prepare patch
+
+* Checkout new branch on lastest commit/change 
+  that should be in the patch `git checkout -b branchname COMMITID`.
+* `git rebase -i HEAD^ or HEAD~NUMBER` to adjust history within the branch
+  * Make sure `prefix: ` is added to email titles
+* Before sending the patch with `git send-email -#INCLUDECOMMITS`, create a patch with `git format-patch -#INCLUDECOMMITS` and run `scripts/checkpatch.pl patch-file` on it
+* `git send-email --subject-prefix "RFC" --cc "Stefan Hajnoczi <stefanha@gmail.com>" --cc "Joel Stanley <joel@jms.id.au>" --cc "Jim Mussared <jim@groklearning.com>" --cc "Julia Suvorova <jusual@mail.ru>" -1`
+
 # Notes 06/22
 
 - NVMC
