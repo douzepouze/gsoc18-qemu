@@ -2,7 +2,18 @@
 
 ## Run microbit tests
 
-TBD
+From `dist` run:
+```bash
+make -j9
+make tests/microbit-test 
+QTEST_LOG=1 QTEST_QEMU_BINARY=arm-softmmu/qemu-system-arm gtester -k --verbose tests/microbit-test
+```
+
+GDB can not easily be attached, because gtester forks and runs the target binary (in this case `qemu-system-arm`). It is easier to let `gtester` run gdb instead:
+
+```bash
+QTEST_QEMU_BINARY="xterm -e gdb --tty $(tty) --args arm-softmmu/qemu-system-arm" gtester -k --verbose tests/microbit-test
+```
 
 ## pyOCD + DAPLINK 
 
