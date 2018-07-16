@@ -1,11 +1,11 @@
 PROJECT_NAME     := blinky
-TARGETS          := nrf51822_xxac
+TARGETS          := fw
 OUTPUT_DIRECTORY := _build
 
 SDK_ROOT := ../../nrfsdk/current/
 PROJ_DIR := .
 
-$(OUTPUT_DIRECTORY)/nrf51822_xxac.out: \
+$(OUTPUT_DIRECTORY)/fw.out: \
   LINKER_SCRIPT  := gcc_nrf51.ld
 
 # Source files common to all targets
@@ -170,12 +170,12 @@ LDFLAGS += --specs=nano.specs -lc -lnosys
 .PHONY: $(TARGETS) default all clean help flash 
 
 # Default target - first one defined
-default: nrf51822_xxac
+default: fw
 
 # Print all targets that can be built
 help:
 	@echo following targets are available:
-	@echo 	nrf51822_xxac
+	@echo 	fw
 
 TEMPLATE_PATH := $(SDK_ROOT)/components/toolchain/gcc
 
@@ -184,7 +184,7 @@ include $(TEMPLATE_PATH)/Makefile.common
 $(foreach target, $(TARGETS), $(call define_target, $(target)))
 
 # Flash the program
-flash: $(OUTPUT_DIRECTORY)/nrf51822_xxac.hex
+flash: $(OUTPUT_DIRECTORY)/fw.hex
 	@echo Flashing: $<
 	nrfjprog --program $< -f nrf51 --sectorerase
 	nrfjprog --reset -f nrf51

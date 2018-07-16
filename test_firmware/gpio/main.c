@@ -23,7 +23,7 @@ int main(void) {
 
     /* Toggle LEDs. */
     while (true) {
-        for (int i = 0; i < LEDS_NUMBER; i++) {
+        for (int i = 0; i < 1; i++) {
             nrf_delay_ms(500);
             nrf_gpio_pin_toggle(m_board_mat_cols[0]);
         }

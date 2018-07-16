@@ -1,3 +1,72 @@
+# Notes 07/16
+
+## GSOC Meet-Up
+
+* LED Mapping
+  * https://github.com/groklearning/microbit-simulated-dal/blob/master/source/Hardware.cpp#L520
+* Microbit-dal Display Rendering
+  * https://github.com/bbcmicrobit/micropython/blob/master/source/microbit/display_readme.md
+* UART v2 Patch
+  * https://github.com/jusual/qemu/commit/498ba4f4ebb50016154991895739d57fd3545c0a
+* Microsoft Javascript Runtime PXT
+  * https://github.com/Microsoft/pxt-microbit/blob/v0.13.52/libs/core/pxt.cpp#L742
+  * https://github.com/Microsoft/pxt-microbit/blob/master/README.md
+
+# Notes 07/15
+
+## Test GPIO
+
+```python
+import machine
+base = 0x50000000
+r = lambda x: hex(machine.mem32[base + x])
+def w(off, value):
+    machine.mem32[base + off] = value
+```
+
+## LEDs in QEMU
+
+* `hw/display/jazz_led.c`
+  * 7-Segment color LED display
+  * http://qemu.11.n7.nabble.com/PATCH-Add-a-7-segments-led-display-td43432.html
+  * Used with MIPS PICA 61
+  * https://www.linux-mips.org/wiki/QEMU
+  * To be used with `qemu-system-mips -M pica61`
+* `hw/display/ssd0303.c`, `hw/display/ssd0323.c`
+  * I2C display, interesting
+
+# Notes 07/13
+
+## Run / Test migration
+
+```bash
+12:29 < stefanha> $ qemu ...options... -incoming tcp::1234
+12:29 < stefanha> Now you have two QEMUs with identical options, except the -incoming option.
+12:30 < stefanha> The second QEMU doesn't run, it's just waiting for an incoming migration connection.
+12:30 < stefanha> In the first QEMU:
+12:30 < stefanha> (qemu) migrate tcp:127.0.0.1:1234
+12:36 < stefanha> For more background, see docs/devel/migration.rst.
+```
+
+## GPIOs in QEMU
+
+* `gpio_key.c` - Key pass through
+  * Used toggle an _outgoing_ (qemu) gpio line after some time out after receiving a pulse on an incoming gpio line
+  * Used in `hw/arm/virt.c` for the power button
+* `pl0651.c` - pl061 Arm PrimeCell PL061 General Purpose
+  * MMIO interface
+  * IRQ interface
+  * GPIO exposes via qemu gpios
+* `omap_gpio.c` - TI OMAP processors GPIO emulation
+  * Same architecture as `pl0651`
+* `zaurus.c`
+* `puv3_gpio.c`
+  * Very basic with exposed GPIOs via qemu gpios
+* `mpc8xxx.c` - Freescale SoCs
+  * Very basic with exposed GPIOs via qemu gpios
+* `imx_gpio.c` - i.MX processors GPIO emulation.
+  * Basic with exposed GPIOs 
+
 # Notes 07/04
 
 ## Run microbit tests
@@ -35,6 +104,10 @@ for non-root access on CMSIS-DAP HID endpoint.
 pouze@gouranga ~/projects/gsoc/dist (git)-[master] % pyocd-tool list
 0 => Microbit [nrf51] boardId => 9900000043114e4500549001000000490000000097969901
 ```
+
+### Attach pyOCD to DAPLINK
+
+TBD
 
 ## Access micropython repl
 
