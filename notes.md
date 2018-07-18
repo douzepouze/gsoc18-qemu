@@ -22,6 +22,14 @@ open('/tmp/unimp_sorted.txt', 'w').writelines(data)
 
 Annotated list for `microbit-micropython-e10a5ff` can be found [here](unimp_micropython.md)
 
+## Investigation into `microbitdisplay.cpp`
+
+MicrobitDisplay does not show a single pixel at the moment.
+
+Calling `display.clear()` hangs/crashes. Reason: Call for [wait_for_events](https://github.com/bbcmicrobit/micropython/blob/e10a5ffdbaf1cc40a82a665d79343c7b6b78d13b/source/microbit/microbitdisplay.cpp#L492) will call `__WFI` which stalls because nothing causes the CPU to return from this call at the moment. Needs investigation.
+
+Display is not driven because the framebuffer is drawn by [callback](https://github.com/bbcmicrobit/micropython/blob/0185d0bf99ded455b64929f2489a76bb21bf406f/source/microbit/microbitdisplay.cpp#L357), which is [driven by](https://github.com/bbcmicrobit/micropython/blob/0185d0bf99ded455b64929f2489a76bb21bf406f/source/microbit/microbitdisplay.cpp#L463) the "ticker" which is driven by [TIMER0](https://github.com/bbcmicrobit/micropython/blob/e26d7c89d4a96de0fa0a1dd5aec024b31fc4816e/source/lib/ticker.c#L30)
+
 # Notes 07/16
 
 ## GSOC Meet-Up
@@ -63,7 +71,7 @@ def w(off, value):
 
 ## Run / Test migration
 
-```bash
+```
 12:29 < stefanha> $ qemu ...options... -incoming tcp::1234
 12:29 < stefanha> Now you have two QEMUs with identical options, except the -incoming option.
 12:30 < stefanha> The second QEMU doesn't run, it's just waiting for an incoming migration connection.
