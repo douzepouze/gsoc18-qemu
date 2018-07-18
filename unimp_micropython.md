@@ -1,3 +1,7 @@
+# Access to unimplemented peripheral devices
+
+Gathered with `microbit-micropython-e10a5ff` and tree containing UART, RNG, NVM, GPIO.
+
 # SPI/TWI 0
 ```
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x3008)
