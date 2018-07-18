@@ -1,3 +1,27 @@
+# Notes 07/18
+
+## State of micropython kernel peripheral usage
+
+Create a list of unimplemented peripheral device access:
+
+```bash
+qemu.. -machine .. -kernel .. -d unimp 2> /tmp/unimp.txt
+```
+
+Prepare the log using `sort | uniq`.
+
+Remove all non-unimp items from the log. 
+
+Sort the list by offset address:
+
+```python
+data = open('/tmp/unimp_uniq_clean.txt').readlines()
+data.sort(key=lambda l: int(l.split(' ')[-1][:-2] ,16))
+open('/tmp/unimp_sorted.txt', 'w').writelines(data)
+```
+
+Annotated list for `microbit-micropython-e10a5ff` can be found [here](unimp_micropython.md)
+
 # Notes 07/16
 
 ## GSOC Meet-Up
