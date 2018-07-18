@@ -2,7 +2,7 @@
 
 Gathered with `microbit-micropython-e10a5ff` and tree containing UART, RNG, NVM, GPIO.
 
-# SPI/TWI 0
+## SPI/TWI 0
 ```
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x3008)
 nrf51.iomem: unimplemented device read (size 4, offset 0x311c)
@@ -22,7 +22,7 @@ nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x3ffc)
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x3ffc)
 ```
 
-# SPI/TWI 1
+## SPI/TWI 1
 ```
 nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x4108)
 nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x411c)
@@ -34,7 +34,7 @@ nrf51.iomem: unimplemented device write (size 4, value 0x1e, offset 0x450c)
 nrf51.iomem: unimplemented device write (size 4, value 0x1980000, offset 0x4524)
 ```
 
-# TIMER 0
+## TIMER 0
 ```
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x8000)
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x8004)
@@ -56,7 +56,7 @@ nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x8c0c)
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x8ffc)
 ```
 
-# TIMER 1
+## TIMER 1
 ```
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x9000)
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x9004)
@@ -73,7 +73,7 @@ nrf51.iomem: unimplemented device read (size 4, offset 0x9548)
 nrf51.iomem: unimplemented device write (size 4, value 0x0, offset 0x954c)
 ```
 
-# Programmable Peripheral Interconnect (PPI)
+## Programmable Peripheral Interconnect (PPI)
 
 ```
 nrf51.iomem: unimplemented device write (size 4, value 0x1, offset 0x1f508)
