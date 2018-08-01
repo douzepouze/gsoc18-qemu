@@ -1,3 +1,24 @@
+# Notes 07/22
+
+## GDB Muscle Memory
+
+```
+set substitute-path from to ; Subsistute search path, also see directory
+save breakpoints path ; Save breakpoints of session
+
+```
+
+# Notes 07/21
+
+## Timer maths
+
+```python
+f = 16e6
+# Arguments: nanoseconds, prescaler
+ns_to_ticks = lambda x,p: (x * f)/(1e9 * (1 << p))
+ticks_to_ns = lambda x,p: (x * (1 << p) * 1e9) / f
+```
+
 # Notes 07/18
 
 ## State of micropython kernel peripheral usage
