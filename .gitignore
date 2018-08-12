@@ -1,2 +1,6 @@
 /dist/
 _build/
+.gdb_history
+tests/
+./tests
+tests

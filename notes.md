@@ -1,3 +1,7 @@
+# Notes 08/04
+
+
+
 # Notes 07/22
 
 ## GDB Muscle Memory
