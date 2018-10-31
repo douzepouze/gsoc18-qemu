@@ -1,6 +1,13 @@
-# Notes 08/04
+# Notes 10/28
 
-
+- Revised patches are located in microbit-shenki branch (tracking upstream origin/microbit-shenki)
+- Brought master to state of current qemu/master (reset, fetch, merge --ff-only): 179f9ac887
+- Change master to track upstream qemu/master
+- Two possibilities to transplant the changeset from microbit-shenki to master:
+  - Cherry-picking
+  - rebase --onto
+- Lets try cherry-picking: 36fe8c6a92 - 4653dcbdbe:
+  - git cherry-pick 36fe8c6a92~1..4653dcbdbe
 
 # Notes 07/22
 
