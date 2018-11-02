@@ -1,3 +1,152 @@
+# Notes 11/1
+
+## TWI in I2C mode
+
+twi_write: 0x124 <- 0x0 [4] - Set Back Error Event
+twi_write: 0x500 <- 0x0 [4] - Disable TWI (or other modes)
+twi_write: 0xffc <- 0x0 [4] - Power off (obsolete?)
+twi_write: 0xffc <- 0x1 [4] - Power on (obsolete?)
+twi_write: 0x508 <- 0x0 [4] - PSELSCL (Pin select for SCL) to PIN0
+twi_write: 0x50c <- 0x1e [4] - PSELSDA (Pin select for for SDA) to PIN30
+twi_write: 0x524 <- 0x1980000 [4] - TWI Frequency to 100 kbps
+twi_write: 0x500 <- 0x5 [4] - Enable TWI
+nrf51_soc.io: unimplemented device write (size 4, value 0x0, offset 0x617c) - GPIOTE: Clear Event PORT
+nrf51_soc.io: unimplemented device write (size 4, value 0x80000000, offset 0x6304) - GPIOTE: Enable Interrupt on event PORT
+twi_write: 0x588 <- 0x1d [4] - Set Address to communicate with to 0x1d (29)
+twi_write: 0x200 <- 0x0 [4] - Deactivate SHORTS 
+twi_write: 0x8 <- 0x1 [4] - Start TWI Transmit sequence
+twi_write: 0x51c <- 0xd [4] - TXD (transmit register) = 0xd
+twi_read: 0x11c [4] = 1 - Content of TXD sent (TXDSENT)
+twi_write: 0x11c <- 0x0 [4] - Clear  TXDSENT
+twi_write: 0x588 <- 0x1d [4] - Set address to 0x1d
+twi_write: 0x200 <- 0x1 [4] - Shortcut between BB (Byte boundary, generated before each byte that is sent or received) and SUSPEND task (suspend twi transmission)
+twi_write: 0x108 <- 0x0 [4] - Clear RXDREADY event (TWI RXD byte received)
+twi_write: 0x0 <- 0x1 [4] - Start TWI receive sequence
+twi_write: 0x200 <- 0x2 [4] - Shortcut between BB event and STOP task (stop twi transmission)
+twi_write: 0x20 <- 0x1 [4] - Resume TWI transaction
+twi_read: 0x108 [4] = 1 - Check RXDREADY
+twi_write: 0x108 <- 0x0 [4] - Clear RXDREADY
+twi_read: 0x518 [4] = 0 - Read RXD
+twi_read: 0x104 [4] = 1 - Check whether TWI is stopped 
+twi_write: 0x104 <- 0x0 [4] - Stop TWi 
+twi_write: 0x588 <- 0x19 [4] - Address to 0x19 (27)
+twi_write: 0x200 <- 0x0 [4] - Clear Shortcuts
+twi_write: 0x8 <- 0x1 [4] - Start TWI transmit sequence
+twi_write: 0x51c <- 0xf [4] - Send 0xf
+twi_read: 0x11c [4] = 1 - Check TXDSENT
+twi_write: 0x11c <- 0x0 [4] - Clear TXD byte sent
+twi_write: 0x588 <- 0x19 [4] - Address to 0x19
+twi_write: 0x200 <- 0x1 [4] - Shortcut between BB event and SUSPEND task
+twi_write: 0x108 <- 0x0 [4] - Clear RXDReady
+twi_write: 0x0 <- 0x1 [4] - Start RX sequence
+twi_write: 0x200 <- 0x2 [4] - Shortcut between BB and STOP 
+twi_write: 0x20 <- 0x1 [4] - Resume TWI transaction
+twi_read: 0x108 [4] = 1 - Check RXDREADY
+twi_write: 0x108 <- 0x0 [4] - Clear RXDREADY
+twi_read: 0x518 [4] = 0 - Read RXD
+twi_read: 0x104 [4] = 1 - Check whether TWI is stopped (yes)
+twi_write: 0x104 <- 0x0 [4] - Clear TWI stopped event
+twi_write: 0x588 <- 0x1e [4] - Set address to 0x1e (30)
+twi_write: 0x200 <- 0x0 [4] - Clear shortcuts
+twi_write: 0x8 <- 0x1 [4] - Start TWI sequence
+twi_write: 0x51c <- 0xd [4] - Send 0xd
+twi_read: 0x11c [4] = 1 - Check if sent
+twi_write: 0x11c <- 0x0 [4] - Clear sent event
+twi_write: 0x588 <- 0x1e [4] - Set address to 0x1e (30)
+twi_write: 0x200 <- 0x1 [4] - Shortcut between BB and SUSPEND
+twi_write: 0x108 <- 0x0 [4] - Clear RXDREADY
+twi_write: 0x0 <- 0x1 [4] - Start TWI receive sequence
+twi_write: 0x200 <- 0x2 [4] - Shortcut between BB and STOP
+twi_write: 0x20 <- 0x1 [4] - Resume TWI transaction
+twi_read: 0x108 [4] = 1 - Check received
+twi_write: 0x108 <- 0x0 [4] - Clear received
+twi_read: 0x518 [4] = 0 - Read RXD
+twi_read: 0x104 [4] = 1 - Check Stopped
+twi_write: 0x104 <- 0x0 [4] - Clear stopped
+
+pouze@gouranga ..micropython/yotta_modules/microbit-dal (git)-[master] % grep -ir "0x0d" .
+./source/bluetooth/MicroBitLEDService.cpp:    0xe9,0x5d,0x0d,0x2d,0x25,0x1d,0x47,0x0a,0xa0,0x62,0xfa,0x19,0x22,0xdf,0xa9,0xa8
+./inc/drivers/MicroBitAccelerometer.h:#define MMA8653_WHOAMI          0x0D
+./inc/drivers/MicroBitCompass.h:#define MAG_OFF_Z_MSB 0x0D
+pouze@gouranga ..micropython/yotta_modules/microbit-dal (git)-[master] %
+
+
+e10a4ff to current master (40e9291):
+ouze@gouranga ..yotta_modules/microbit-dal/inc/drivers (git)-[master] % git diff --stat e10a5ff 40e9291
+ .gitignore                                |    3 +
+ Makefile                                  |   23 +-
+ README.md                                 |   25 +-
+ docs/accelerometer.rst                    |   26 +-
+ docs/audio.rst                            |    7 +-
+ docs/compass.rst                          |   20 +-
+ docs/devguide/hexformat.rst               |   69 +++++
+ docs/devguide/repl.rst                    |  102 ++++++--
+ docs/display.rst                          |   20 +-
+ docs/image.rst                            |   27 +-
+ docs/index.rst                            |    1 +
+ docs/music.rst                            |    7 +-
+ docs/neopixel-croc.png                    |  Bin 18314 -> 31841 bytes
+ docs/neopixel-croc.svg                    | 1198 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ docs/neopixel.rst                         |   21 +-
+ docs/pin.rst                              |   32 ++-
+ docs/pinout.png                           |  Bin 124050 -> 127230 bytes
+ docs/tutorials/next.rst                   |    5 +-
+ docs/tutorials/radio.rst                  |    2 +-
+ docs/tutorials/storage.rst                |    9 +-
+ docs/uart.rst                             |   18 +-
+ inc/genhdr/qstrdefs.generated.h           |    1 +
+ inc/microbit/microbitdal.h                |    6 +-
+ inc/microbit/modmicrobit.h                |    1 +
+ inc/microbit/mpconfigport.h               |    7 +-
+ inc/py/obj.h                              |   98 ++++---
+ module.json                               |    2 +-
+ source/microbit/events.cpp                |    2 +-
+ source/microbit/help.c                    |    1 +
+ source/microbit/main.cpp                  |   53 ++--
+ source/microbit/microbitaccelerometer.cpp |   34 ++-
+ source/microbit/microbitcompass.cpp       |   57 ++--
+ source/microbit/microbitdisplay.cpp       |   93 ++++++-
+ source/microbit/microbitpin.cpp           |    6 +-
+ source/microbit/microbitpinmode.c         |    8 +-
+ source/microbit/modos.c                   |   23 +-
+ source/py/objfun.c                        |   20 +-
+ source/py/parse2.c                        |    4 +-
+ tools/adduicr.py                          |   51 ++++
+ tools/hexlifyscript.py                    |   15 +-
+ tools/makecombinedhex.py                  |   22 +-
+ tools/makeversionhdr.py                   |   85 ++++++
+ 42 files changed, 1944 insertions(+), 260 deletions(-)
+
+
+Main now uses "autoDetect" of Accelormeter and Compass.
+Need to update included modules using yotta (or check out microbit-dal repo).
+Interesting changes are mostly in the drivers that are part of the microbit-dal
+
+@@ -126,15 +140,20 @@ typedef struct _appended_script_t {
+ #define APPENDED_SCRIPT ((const appended_script_t*)microbit_mp_appended_script())
+
+ int main(void) {
++    // Configure the soft reset button
++    gpio_init_in(&reset_button_gpio, MICROBIT_PIN_BUTTON_RESET);
++    gpio_mode(&reset_button_gpio, PullUp);
++    gpio_irq_init(&reset_button_gpio_irq, MICROBIT_PIN_BUTTON_RESET, &reset_button_handler, 1 /* dummy, must be non-zero */);
++    gpio_irq_set(&reset_button_gpio_irq, IRQ_FALL, 1);
++
++    // Create dynamically-allocated DAL components
++    ubit_accelerometer = &MicroBitAccelerometer::autoDetect(ubit_i2c);
++    ubit_compass = &MicroBitCompass::autoDetect(ubit_i2c);
++    ubit_compass_calibrator = new MicroBitCompassCalibrator(*ubit_compass, *ubit_accelerometer, ubit_display);
++
+
+MicroBitAccelerometer probes which Accelerometer is installed on the MicroBit
+and creates an instance of the driver (so its basically some kind of factory):
+
+https://github.com/lancaster-university/microbit-dal/blob/9164922a519aa213a565cbf2abaa2cf4debf4977/source/drivers/MicroBitAccelerometer.cpp#L79
+https://github.com/lancaster-university/microbit-dal/blob/9164922a519aa213a565cbf2abaa2cf4debf4977/source/drivers/MicroBitCompass.cpp#L101
+
+
+
+
 # Notes 10/28
 
 - Revised patches are located in microbit-shenki branch (tracking upstream origin/microbit-shenki)
