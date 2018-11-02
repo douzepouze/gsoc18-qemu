@@ -2,3 +2,6 @@
 	path = qemu
 	url = https://github.com/douzepouze/qemu.git
 	branch = microbit
+[submodule "micropython"]
+	path = micropython
+	url = https://github.com/bbcmicrobit/micropython
