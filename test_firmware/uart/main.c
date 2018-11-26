@@ -4,7 +4,7 @@
 #include "nrf_drv_uart.h"
 #include "nrf_assert.h"
 
-static uint8_t const str[] = "Hello NRF51\n";
+static uint8_t const STR_HELLO[] = "Hello NRF51\n";
 
 int main(void)
 {
@@ -22,14 +22,14 @@ int main(void)
     ASSERT(err_code == NRF_SUCCESS);
 
     nrf_drv_uart_rx_enable(&uart_driver);
-    nrf_drv_uart_tx(&uart_driver, str, sizeof(str));
+    nrf_drv_uart_tx(&uart_driver, STR_HELLO, sizeof(STR_HELLO));
 
-    uint8_t buffer[10];
+    uint8_t c;
 
-    /* Toggle LEDs. */
+    /* Echo Loop */
     while (true)
     {
-        nrf_drv_uart_rx(&uart_driver, buffer, sizeof(buffer));
-        nrf_drv_uart_tx(&uart_driver, buffer, sizeof(buffer));
+        nrf_drv_uart_rx(&uart_driver, &c, 1);
+        nrf_drv_uart_tx(&uart_driver, &c, 1);
     }
 }

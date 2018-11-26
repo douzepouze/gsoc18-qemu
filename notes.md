@@ -1,3 +1,56 @@
+# Notes 11/2
+
+f_timer = 16 MHz
+COUNTER[0:15] -> max 2**16 - 1 = 65535 = 0xFFFF
+
+
+```
+1.318921: write addr 0x140 data 0x0 - Clear COMPARE[0] EVENT
+1.319000: write addr 0x144 data 0x0 - Clear COMPARE[1] EVENT
+1.319005: write addr 0x148 data 0x0 - Clear COMPARE[2] EVENT
+1.319007: write addr 0x14c data 0x0 - Clear COMPARE[3] EVENT
+1.319779: read addr 0x504 data 0x0 - Read MODE
+1.319785: write addr 0x504 data 0x0 - MODE = TIMER
+1.319930: read addr 0x508 data 0x0 - Read BITMODE
+1.319934: write addr 0x508 data 0x0 - BITMODE = 16bit
+1.320069: read addr 0x510 data 0x0 - Read PRESCALER
+1.320073: write addr 0x510 data 0x0 - PRESCALER = 0
+1.320300: read addr 0x510 data 0x0 - Read PRESCALER
+1.320700: read addr 0x200 data 0x0 - Read SHORTS
+1.320706: write addr 0x200 data 0x0 - SHORTS = Disable ALL
+1.320836: read addr 0x200 data 0x0 - Read SHORTS
+1.320840: write addr 0x200 data 0x1 - Set Shorts = COMPARE0_CLEAR (Clear Counter Register on COMPARE[0] EVENT)
+1.321131: write addr 0x304 data 0x10000 - Enable Interrupt on COMPARE[0] Event
+1.321270: write addr 0x540 data 0x7a1200 - CC[0] = 0x7a1200
+1.321460: write addr 0x0 data 0x1 - START Timer0 
+1.324772: read addr 0x140 data 0x1 - Read COMPARE[0] Event (Is set)
+1.324929: read addr 0x304 data 0x10000 - Enable Interrupt on COMPARE[0] Event
+1.325084: write addr 0x140 data 0x0 - Clear COMPARE[0]
+Tick: 0
+1.329719: read addr 0x144 data 0x1 - Check COMPARE[1] EVENT (is set)
+1.329725: read addr 0x304 data 0x10000 - Read INTSET
+1.329729: read addr 0x148 data 0x1 - Check COMPARE[2] EVENT
+1.329732: read addr 0x304 data 0x10000 - READ INTSET
+1.329736: read addr 0x14c data 0x1  - Check COMPARE[3] EVENT
+1.329739: read addr 0x304 data 0x10000 - READ INTSET
+1.329810: read addr 0x140 data 0x1 - Check COMPARE[0]
+1.329814: read addr 0x304 data 0x10000 - READ INTSET
+1.329818: write addr 0x140 data 0x0 - Clear COMPARE[0]
+Tick: 500
+1.330261: read addr 0x144 data 0x1 
+1.330265: read addr 0x304 data 0x10000 
+1.330268: read addr 0x148 data 0x1 
+1.330271: read addr 0x304 data 0x10000 
+1.330274: read addr 0x14c data 0x1 
+1.330277: read addr 0x304 data 0x10000 
+1.332687: read addr 0x140 data 0x1 
+1.332692: read addr 0x304 data 0x10000 
+1.332705: write addr 0x140 data 0x0 
+Tick: 1000
+
+```
+
+
 # Notes 11/1
 
 ## TWI in I2C mode
@@ -10,8 +63,8 @@ twi_write: 0x508 <- 0x0 [4] - PSELSCL (Pin select for SCL) to PIN0
 twi_write: 0x50c <- 0x1e [4] - PSELSDA (Pin select for for SDA) to PIN30
 twi_write: 0x524 <- 0x1980000 [4] - TWI Frequency to 100 kbps
 twi_write: 0x500 <- 0x5 [4] - Enable TWI
-nrf51_soc.io: unimplemented device write (size 4, value 0x0, offset 0x617c) - GPIOTE: Clear Event PORT
-nrf51_soc.io: unimplemented device write (size 4, value 0x80000000, offset 0x6304) - GPIOTE: Enable Interrupt on event PORT
+nrf51_soc.io: unimplemented device write (, value 0x0, offset 0x617c) - GPIOTE: Clear Event PORT
+nrf51_soc.io: unimplemented device write (, value 0x80000000, offset 0x6304) - GPIOTE: Enable Interrupt on event PORT
 twi_write: 0x588 <- 0x1d [4] - Set Address to communicate with to 0x1d (29)
 twi_write: 0x200 <- 0x0 [4] - Deactivate SHORTS 
 twi_write: 0x8 <- 0x1 [4] - Start TWI Transmit sequence
